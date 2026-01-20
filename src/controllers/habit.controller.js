@@ -1,4 +1,3 @@
-const { validationResult } = require("express-validator");
 const dayjs = require("dayjs");
 const Habit = require("../models/habit.model");
 const Completion = require("../models/completion.model");
@@ -15,33 +14,15 @@ async function listHabits(req, res) {
 }
 
 async function createHabit(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json({ error: { code: "VALIDATION_ERROR", message: "Invalid input" } });
+  const { title } = req.body || {};
+  if (!title) {
+    return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Title is required" } });
   }
-  const habit = await Habit.create({
-    userId: req.user.id,
-    title: req.body.title,
-  });
-  res
-    .status(201)
-    .json({
-      id: String(habit._id),
-      title: habit.title,
-      active: habit.active,
-      createdAt: habit.createdAt,
-    });
+  const habit = await Habit.create({ userId: req.user.id, title: String(title) });
+  res.status(201).json({ id: String(habit._id), title: habit.title, active: habit.active, createdAt: habit.createdAt });
 }
 
 async function completeHabit(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json({ error: { code: "VALIDATION_ERROR", message: "Invalid input" } });
-  }
   const habit = await Habit.findOne({
     _id: req.params.id,
     userId: req.user.id,
@@ -52,25 +33,14 @@ async function completeHabit(req, res) {
       .json({ error: { code: "NOT_FOUND", message: "Habit not found" } });
   }
   const dateStr = dayjs().format("YYYY-MM-DD");
-  try {
-    await Completion.updateOne(
-      { habitId: habit._id, date: dateStr },
-      { $setOnInsert: { habitId: habit._id, date: dateStr } },
-      { upsert: true },
-    );
-  } catch (e) {
-  res.status(500).json({ error: { code: "SERVER_ERROR", message: "Could not complete habit" } });
+  const exists = await Completion.findOne({ habitId: habit._id, date: dateStr }).lean();
+  if (!exists) {
+    await Completion.create({ habitId: habit._id, date: dateStr });
   }
   res.json({ habitId: String(habit._id), date: dateStr, completed: true });
 }
 
 async function habitStatus(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res
-      .status(400)
-      .json({ error: { code: "VALIDATION_ERROR", message: "Invalid input" } });
-  }
   const habit = await Habit.findOne({
     _id: req.params.id,
     userId: req.user.id,
@@ -80,8 +50,13 @@ async function habitStatus(req, res) {
       .status(404)
       .json({ error: { code: "NOT_FOUND", message: "Habit not found" } });
   }
-  const dateStr = req.query.date;
-  res.json({ habitId: String(habit._id), date: dateStr, completed: true });
+  const dateStr = String(req.query.date || "").trim();
+  if (!dateStr) {
+    return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Query date required" } });
+  }
+  const completion = await Completion.findOne({ habitId: habit._id, date: dateStr }).lean();
+  const completed = !!completion;
+  res.json({ habitId: String(habit._id), date: dateStr, completed });
 }
 
 module.exports = { listHabits, createHabit, completeHabit, habitStatus };
