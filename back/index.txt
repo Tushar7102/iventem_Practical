@@ -1,0 +1,313 @@
+✅ Instagram Mini Clone (MERN) – Full Details
+🧩 Tech Stack
+Frontend:
+
+React (Vite / CRA)
+
+React Router DOM
+
+Axios
+
+Tailwind CSS / CSS
+
+Context API / Redux (optional)
+
+Backend:
+
+Node.js + Express.js
+
+MongoDB + Mongoose
+
+JWT Auth
+
+bcrypt
+
+multer / cloudinary (image upload)
+
+✅ Core Features (MUST HAVE)
+1) Authentication
+
+✅ Register
+✅ Login
+✅ Logout
+✅ JWT token + protected routes
+✅ Password hashing
+
+2) User Profile
+
+✅ Profile page
+
+user avatar
+
+username, bio
+
+posts count
+
+followers / following count
+
+all user posts grid
+
+✅ Edit profile
+
+update bio
+
+update profile picture
+
+3) Post System
+
+✅ Create post
+
+image + caption
+
+upload image
+
+post goes to feed
+
+✅ Delete post (only owner)
+
+✅ Like post
+
+like/unlike toggle
+
+✅ Comment post
+
+add comment
+
+show comments list
+
+4) Follow/Unfollow System
+
+✅ follow/unfollow users
+✅ show follower list + following list
+
+5) Feed (Home)
+
+✅ show latest posts from:
+
+you + following users
+✅ sort by newest
+
+🌟 Extra Features (OPTIONAL but 🔥)
+
+✅ Search users
+✅ Post save/bookmark
+✅ Story feature (advanced)
+✅ Real-time notifications (socket.io)
+
+📄 Pages / Screens (Frontend)
+Routes (React)
+Public routes:
+
+/login
+
+/register
+
+Protected routes:
+
+/ → Home feed
+
+/profile/:id → user profile
+
+/edit-profile
+
+/create → create post
+
+🗄️ Database Schema (MongoDB)
+✅ User Model
+{
+  username: String,
+  email: String,
+  password: String,
+
+  bio: String,
+  profilePic: String,
+
+  followers: [ObjectId], // User IDs
+  following: [ObjectId],
+
+  createdAt: Date
+}
+
+✅ Post Model
+{
+  user: ObjectId,  // owner userId
+  image: String,
+  caption: String,
+
+  likes: [ObjectId], // userIds
+
+  comments: [
+    {
+      user: ObjectId,
+      text: String,
+      createdAt: Date
+    }
+  ],
+
+  createdAt: Date
+}
+
+🔥 Backend API Routes (Complete)
+Auth Routes
+
+✅ POST /api/auth/register
+Body:
+
+{ "username":"a", "email":"a@gmail.com", "password":"12345" }
+
+
+✅ POST /api/auth/login
+Returns:
+
+token
+
+user info
+
+✅ GET /api/auth/me
+(token required)
+
+User Routes
+
+✅ GET /api/users/:id → user profile data
+
+✅ PUT /api/users/update → update profile (bio, username)
+
+✅ PUT /api/users/follow/:id → follow/unfollow user
+
+✅ GET /api/users/search?query=abc (optional)
+
+Post Routes
+
+✅ POST /api/posts/create
+FormData:
+
+image file
+
+caption
+
+✅ GET /api/posts/feed
+(get posts from following + self)
+
+✅ GET /api/posts/user/:id
+(get all posts of a user)
+
+✅ DELETE /api/posts/:id
+(delete own post)
+
+✅ PUT /api/posts/like/:id
+(like/unlike)
+
+✅ POST /api/posts/comment/:id
+body:
+
+{ "text": "nice post bro" }
+
+📁 Folder Structure (Professional)
+Backend
+backend/
+  src/
+    config/
+      db.js
+    models/
+      User.js
+      Post.js
+    routes/
+      auth.routes.js
+      user.routes.js
+      post.routes.js
+    controllers/
+      auth.controller.js
+      user.controller.js
+      post.controller.js
+    middleware/
+      auth.middleware.js
+      upload.middleware.js
+    utils/
+      generateToken.js
+    server.js
+
+Frontend
+frontend/
+  src/
+    pages/
+      Login.jsx
+      Register.jsx
+      Home.jsx
+      Profile.jsx
+      EditProfile.jsx
+      CreatePost.jsx
+    components/
+      Navbar.jsx
+      PostCard.jsx
+      CommentBox.jsx
+      UserCard.jsx
+    context/
+      AuthContext.jsx
+    utils/
+      axiosInstance.js
+    App.jsx
+
+🔁 Project Flow (How it works)
+✅ Step-by-step user flow:
+
+User registers / logs in
+
+token save in localStorage
+
+Home feed loads:
+
+show posts from following users + self
+
+Like/comment on posts
+
+Visit profiles
+
+Follow/unfollow
+
+Create new post
+
+✅ Best Order to Build (Bhai ye follow kar)
+Phase 1:
+
+✅ Auth + JWT + Protected routes
+✅ basic UI
+
+Phase 2:
+
+✅ Create post + feed display
+
+Phase 3:
+
+✅ Like + comment system
+
+Phase 4:
+
+✅ Profile + follow/unfollow
+
+Phase 5:
+
+✅ Image upload (Cloudinary)
+
+⭐ Bonus: Best Libraries
+
+✅ Backend:
+
+jsonwebtoken
+
+bcryptjs
+
+multer
+
+cloudinary
+
+cors
+
+dotenv
+
+✅ Frontend:
+
+react-router-dom
+
+axios
+
+react-hot-toast (notifications)
